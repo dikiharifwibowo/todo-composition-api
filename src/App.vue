@@ -1,114 +1,31 @@
-<script>
-import { ref, reactive, computed, onMounted, watchEffect, watch } from 'vue'
-import ListTodo from './components/ListTodo.vue'
-
-export default {
-  components: { ListTodo },
-  setup() {
-    onMounted( () => {
-      let items = localStorage.getItem('todos')
-      todos.list = items ? JSON.parse(items) : []
-    })
-
-    const todo = ref("");
-    const todos = reactive({
-      list: []
-    })
-    // onMounted( () => {
-    //   console.log(todos.list)
-    // })
-    // watchEffect( () => {
-    //   console.log(todo.value, todos.list)
-    //   todo.value==='test' ? console.log('test') : console.log('not test') 
-    // })
-
-    // watch([todo, todos], (newValue, prevValue) => {
-    //   console.log("value", newValue, prevValue)
-    // })
-
-    // watch(todo, (prevValue) => {
-    //   console.log("prev", prevValue)
-    // })
-    const totalTodo = computed( () => {
-      return todos.list.length
-    })
-
-    const addTodo = () => {
-      if(!todo.value) return
-      todos.list.unshift({
-        activity: todo.value,
-        isDone: false
-      })
-      todo.value = ''
-      saveToLocalStorage()
-    }
-    const doneActivity = (indexTodo) => {
-      todos.list = todos.list.filter((item, index) => {
-        if(index === indexTodo) item.isDone = true;
-
-        return item
-      })
-      saveToLocalStorage()
-    }
-    const deleteTodo = (indexTodo) => {
-      todos.list = todos.list.filter((item, index) => {
-        if(index !== indexTodo) return item
-      })
-      saveToLocalStorage()
-    }
-    const unCheckTodo = (indexTodo) => {
-      todos.list = todos.list.filter((item, index) => {
-        if(index === indexTodo) item.isDone = false;
-
-        return item
-      })
-      saveToLocalStorage()
-    }
-    const saveToLocalStorage = () => {
-      localStorage.setItem('todos', JSON.stringify(todos.list))
-    }
-    
-    return {
-      todo,
-      todos,
-      totalTodo,
-      addTodo,
-      doneActivity,
-      deleteTodo,
-      unCheckTodo,
-    }
-  }
-}
-
-
-</script>
-
 <template>
-  <div class="container mx-auto px-4">
-   <div class="bg-red-200 relative rounded-xl overflow-auto p-8">
-      <div class="flex text-2xl text-zinc-500 mb-2">
-        Simple To Do App
-      </div>
-      <div class="flex justify-between gap-8">
-        <label class="relative block w-full">
-          <span class="absolute inset-y-0 left-0 flex items-center pl-2">
-            <svg class="h-5 w-5 fill-gray-300" viewBox="0 0 20 20"><!-- ... --></svg>
-          </span>
-          <input v-model="todo" class="placeholder:italic placeholder:text-gray-400 block bg-white w-full border 
-          border-gray-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none 
-          focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm" placeholder="Add anything..." type="text" name="search"/>
-        </label>
-        <button type="button" @click="addTodo" class="min-w-fit py-2 px-3 bg-cyan-500 hover:bg-cyan-600 text-white text-sm font-semibold rounded-md shadow focus:outline-none" tabindex="-1">
-          Add To Do 
+  <div class="container mx-auto px-4 mb-12">
+    <nav class="bg-white border-gray-200 rounded dark:bg-gray-800">
+      <div class="container flex flex-wrap justify-between items-center mx-auto">
+        <a href="#" class="flex">
+          <span class="self-center text-lg font-semibold whitespace-nowrap dark:text-white">Simple Todo & Notes</span>
+        </a>
+        <button data-collapse-toggle="mobile-menu" type="button" class="inline-flex items-center p-2 ml-3 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="mobile-menu-2" aria-expanded="false">
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path></svg>
+          <svg class="hidden w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
         </button>
+        <div class="hidden w-full md:block md:w-auto" id="mobile-menu">
+          <ul class="flex flex-col mt-4 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium">
+            <li>
+              <router-link to="/" class="block py-2 pr-4 pl-3 text-gray-700 hover:bg-gray-50 md:hover:bg-transparent md:border-0 
+              md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Home</router-link>
+            </li>
+            <li>
+              <router-link to="/notes" class="block py-2 pr-4 pl-3 text-gray-700 hover:bg-gray-50 md:hover:bg-transparent md:border-0 
+              md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Notes</router-link>
+            </li>
+          </ul>
+        </div>
       </div>
-      <div class="flex text-lg text-zinc-500 mt-2">
-        Total To Do : {{ totalTodo }}
-      </div>
-    </div>
-
-    <list-todo :todos="todos.list" @uncheck-todo="unCheckTodo" @delete-todo="deleteTodo" @set-done-activity="doneActivity"></list-todo>
+    </nav>
   </div>
+  <router-view></router-view>
+  
 </template>
 
 <style>
@@ -116,7 +33,6 @@ export default {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
   margin-top: 60px;
 }
